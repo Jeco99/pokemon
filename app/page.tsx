@@ -1,7 +1,8 @@
 "use client";
 
-import PokemonCard from "@/component/pokemoncard";
-
+import PokemonCard from "@/component/Card/pokemoncard";
+import { useEffect, useState } from "react";
+import { SimpleGrid, Text } from "@mantine/core";
 export type Pokemon = {
   name: string;
   url: string;
@@ -10,6 +11,7 @@ export type Pokemon = {
 export type PokemonMainData = {
   name: string;
   types: string[];
+  id: string;
 };
 
 export async function FetchPokemon() {
@@ -31,8 +33,9 @@ export async function FetchPokemon() {
 }
 
 export async function GetIndividualPokemonData(url: string) {
-  const pokemonFetchData = await fetch(url).then((response) => response.json());
-  const pokemonData = pokemonFetchData;
+  const pokemonData = await fetch(url).then((response) => response.json());
+  // const pokemonData = pokemonFetchData;
+  console.log(pokemonData);
   // console.log(pokemonData.name);
   // // console.log(pokemonData.types.name);
   const pokemon: PokemonMainData = {
@@ -40,16 +43,39 @@ export async function GetIndividualPokemonData(url: string) {
     types: pokemonData.types.map(
       (typeInfo: { type: { name: string } }) => typeInfo.type.name
     ),
+    id: pokemonData.id,
   };
 
   return pokemon;
 }
 
 export default function Home() {
-  console.log(FetchPokemon());
+  const [pokemonData, setPokemonData] = useState<PokemonMainData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await FetchPokemon();
+      setPokemonData(data);
+    };
+    fetchData();
+  }, []);
+
+  // console.log(pokemonData); // This will log each time `pokemonData` state changes
+
   return (
     <>
-      <PokemonCard />
+      <Text size="md" ta="center">
+        Pokedex Data
+      </Text>
+      <ul>
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+          {pokemonData.map((data, index) => (
+            <ul key={index}>
+              <PokemonCard name={data.name} types={data.types} id={data.id} />
+            </ul>
+          ))}
+        </SimpleGrid>
+      </ul>{" "}
     </>
   );
 }

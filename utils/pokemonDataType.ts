@@ -11,7 +11,6 @@ export type PokemonMainData = {
 
 export type SearchDataProp = {
   onSearch: (query: string) => void;
-  loading: boolean;
 };
 
 export type FilteredButtonProps = {

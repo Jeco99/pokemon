@@ -13,6 +13,9 @@ const FilteredButton: React.FC<FilteredButtonProps> = ({ onTypeSelect }) => {
 
   return (
     <NativeSelect
+      variant="filled"
+      size="lg"
+      radius="md"
       label="Filter by Type"
       value={value}
       onChange={handleTypeSelect}

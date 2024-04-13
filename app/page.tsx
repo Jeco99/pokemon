@@ -4,60 +4,19 @@ import PokemonCard from "@/component/Card/pokemoncard";
 import { useEffect, useState } from "react";
 import { SimpleGrid, Text } from "@mantine/core";
 import SearchBar from "@/component/Search/search";
-
-export type Pokemon = {
-  name: string;
-  url: string;
-};
-
-export type PokemonMainData = {
-  name: string;
-  types: string[];
-  id: string;
-};
-
-export async function FetchPokemon() {
-  // const PokemonList: PokemonMainData[] = []
-  const url = "https://pokeapi.co/api/v2/pokemon?limit=10";
-  const pokemonAllData = await fetch(url).then((response) => response.json());
-  const fetchName_Url = pokemonAllData.results;
-  const PokemonList: PokemonMainData[] = [];
-  await Promise.all(
-    fetchName_Url.map(async ({ url }: Pokemon) => {
-      // console.log("Name: ", name);
-      // console.log("Url: ", url);
-      const pokemon = await GetIndividualPokemonData(url);
-      PokemonList.push(pokemon);
-    })
-  );
-  // console.log(allFetchData);
-  return PokemonList;
-}
-
-export async function GetIndividualPokemonData(url: string) {
-  const pokemonData = await fetch(url).then((response) => response.json());
-  // const pokemonData = pokemonFetchData;
-  console.log(pokemonData);
-  // console.log(pokemonData.name);
-  // // console.log(pokemonData.types.name);
-  const pokemon: PokemonMainData = {
-    name: pokemonData.name,
-    types: pokemonData.types.map(
-      (typeInfo: { type: { name: string } }) => typeInfo.type.name
-    ),
-    id: pokemonData.id,
-  };
-
-  return pokemon;
-}
+import FilterButton from "@/component/Filter/filter";
+import { PokemonMainData } from "@/utils/pokemonDataType";
+import { FetchPokemon } from "@/utils/pokemonFetch";
 
 export default function Home() {
   const [pokemonData, setPokemonData] = useState<PokemonMainData[]>([]);
+  const [filteredData, setFilteredData] = useState<PokemonMainData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await FetchPokemon();
       setPokemonData(data);
+      setFilteredData(data);
     };
     fetchData();
   }, []);
@@ -70,10 +29,19 @@ export default function Home() {
       );
       return searchName || searchType;
     });
-    setPokemonData(searchData);
+    setFilteredData(searchData);
   };
 
-  // console.log(pokemonData); // This will log each time `pokemonData` state changes
+  const handleTypeFilter = (selectedType: string) => {
+    if (selectedType === "All") {
+      setFilteredData(pokemonData);
+    } else {
+      const filteredByType = pokemonData.filter((pokemon) =>
+        pokemon.types.includes(selectedType.toLowerCase())
+      );
+      setFilteredData(filteredByType);
+    }
+  };
 
   return (
     <>
@@ -81,9 +49,10 @@ export default function Home() {
         Pokedex Data
       </Text>
       <SearchBar onSearch={handleSearch} />
+      <FilterButton onTypeSelect={handleTypeFilter} />
       <ul>
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
-          {pokemonData.map((data, index) => (
+          {filteredData.map((data, index) => (
             <ul key={index}>
               <PokemonCard name={data.name} types={data.types} id={data.id} />
             </ul>

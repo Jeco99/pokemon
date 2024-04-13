@@ -1,5 +1,5 @@
-import { Card, Image, Text, Button, Group } from "@mantine/core";
-import { PokemonMainData } from "@/app/page";
+import { Card, Image, Text, Button, Title, Center } from "@mantine/core";
+import { PokemonMainData } from "@/utils/pokemonDataType";
 
 export default function PokemonCard({ name, types, id }: PokemonMainData) {
   return (
@@ -15,10 +15,11 @@ export default function PokemonCard({ name, types, id }: PokemonMainData) {
         />
       </Card.Section>
 
-      <Group justify="space-between" mt="md" mb="xs">
-        <Text fw={500}>{name}</Text>
-      </Group>
+      <Center>
+        <Title order={1}>{name}</Title>
+      </Center>
 
+      <Title order={3}>Type</Title>
       {types.map((type, typeIndex) => (
         <Text key={typeIndex} size="sm" c="dimmed">
           {type}

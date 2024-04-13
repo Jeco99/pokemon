@@ -1,5 +1,6 @@
 import { Card, Image, Text, Button, Title, Center } from "@mantine/core";
 import { PokemonMainData } from "@/utils/pokemonDataType";
+import Link from "next/link";
 
 export default function PokemonCard({ name, types, id }: PokemonMainData) {
   return (
@@ -29,9 +30,16 @@ export default function PokemonCard({ name, types, id }: PokemonMainData) {
         {/* {types.map} */}
       </Text>
 
-      <Button color="blue" fullWidth mt="md" radius="md">
-        Book classic tour now
-      </Button>
+      <Link
+        href={`/pokemon/${id}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: "none" }}
+      >
+        <Button color="blue" fullWidth mt="md" radius="md">
+          More details {name}
+        </Button>
+      </Link>
     </Card>
   );
 }

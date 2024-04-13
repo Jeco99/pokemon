@@ -3,6 +3,8 @@
 import PokemonCard from "@/component/Card/pokemoncard";
 import { useEffect, useState } from "react";
 import { SimpleGrid, Text } from "@mantine/core";
+import SearchBar from "@/component/Search/search";
+
 export type Pokemon = {
   name: string;
   url: string;
@@ -60,6 +62,17 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const handleSearch = (query: string) => {
+    const searchData = pokemonData.filter((item) => {
+      const searchName = item.name.toLowerCase().includes(query.toLowerCase());
+      const searchType = item.types.some((type) =>
+        type.toLowerCase().includes(query.toLowerCase())
+      );
+      return searchName || searchType;
+    });
+    setPokemonData(searchData);
+  };
+
   // console.log(pokemonData); // This will log each time `pokemonData` state changes
 
   return (
@@ -67,6 +80,7 @@ export default function Home() {
       <Text size="md" ta="center">
         Pokedex Data
       </Text>
+      <SearchBar onSearch={handleSearch} />
       <ul>
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
           {pokemonData.map((data, index) => (

@@ -16,3 +16,11 @@ export type SearchDataProp = {
 export type FilteredButtonProps = {
   onTypeSelect: (selectedType: string) => void;
 };
+
+export type IndividualPokemonData = {
+  id: string;
+  name: string;
+  types: string[];
+  stats: { base_stat: number; stat: { name: string } }[];
+  abilities: string[];
+};

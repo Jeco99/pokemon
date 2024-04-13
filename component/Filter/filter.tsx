@@ -25,6 +25,7 @@ const FilteredButton: React.FC<FilteredButtonProps> = ({ onTypeSelect }) => {
         "Electric",
         "Psychic",
         "Rock",
+        "Poison",
       ]}
     />
   );

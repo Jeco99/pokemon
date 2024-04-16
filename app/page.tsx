@@ -45,16 +45,15 @@ export default function Home() {
 
   const totalPages = Math.ceil(100 / itemsperpage);
   const handleSearch = (query: string) => {
-    setError(null);
     const searchData = pokemonData.filter((item) => {
       const searchName = item.name.toLowerCase().includes(query.toLowerCase());
       const searchType = item.types.some((type) =>
         type.toLowerCase().includes(query.toLowerCase())
       );
-
-      // if (!searchName && !searchType) {
-      //   setError("Not Found");
-      // }
+      setError(null);
+      if (searchName && searchType) {
+        setError("Not Found");
+      }
 
       return searchName || searchType;
     });
@@ -107,6 +106,17 @@ export default function Home() {
           <SearchBar onSearch={handleSearch} />
           <FilterButton onTypeSelect={handleTypeFilter} />
         </Flex>
+        <Group>
+          <Button onClick={handlePrevPage} disabled={currentPage === 1}>
+            Previous Page
+          </Button>
+          <Button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next Page
+          </Button>
+        </Group>
       </Box>
       {isLoading ? (
         <Center p={400}>
@@ -125,15 +135,6 @@ export default function Home() {
           ))}
         </SimpleGrid>
       )}
-
-      <Group>
-        <Button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous Page
-        </Button>
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next Page
-        </Button>
-      </Group>
     </Container>
   );
 }

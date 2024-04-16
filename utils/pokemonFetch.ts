@@ -4,9 +4,10 @@ import {
   IndividualPokemonData,
 } from "./pokemonDataType";
 
-export async function FetchPokemon() {
-  const url = "https://pokeapi.co/api/v2/pokemon?limit=10";
+export async function FetchPokemon(offset: number, itemsperpage: number) {
+  // const url = "https://pokeapi.co/api/v2/pokemon?limit=10";
   // const url = "https://pokeapi.co/api/v2/pokemonssss?limit=10";
+  const url = `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${itemsperpage}`;
   const pokemonData = await fetch(url, { cache: "no-cache" });
 
   if (pokemonData.status === 200) {

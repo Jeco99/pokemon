@@ -10,6 +10,8 @@ import {
   SimpleGrid,
   Loader,
   Center,
+  Group,
+  Button,
 } from "@mantine/core";
 import SearchBar from "@/component/Search/search";
 import FilterButton from "@/component/Filter/filter";
@@ -21,11 +23,14 @@ export default function Home() {
   const [filteredData, setFilteredData] = useState<PokemonMainData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsperpage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(async () => {
-        const data = await FetchPokemon();
+        const offset = (currentPage - 1) * itemsperpage;
+        const data = await FetchPokemon(offset, itemsperpage);
         if (data.length === 0) {
           setError("Failed to fetch Pokemon data. Please try again.");
           setIsLoading(false);
@@ -36,18 +41,20 @@ export default function Home() {
       }, 1000);
     };
     fetchData();
-  }, []);
+  }, [currentPage]);
 
+  const totalPages = Math.ceil(100 / itemsperpage);
   const handleSearch = (query: string) => {
     const searchData = pokemonData.filter((item) => {
       const searchName = item.name.toLowerCase().includes(query.toLowerCase());
       const searchType = item.types.some((type) =>
         type.toLowerCase().includes(query.toLowerCase())
       );
-
-      if (!searchName && searchType) {
-        return setError("Not Found");
+      setError(null);
+      if (searchName && searchType) {
+        setError("Not Found");
       }
+
       return searchName || searchType;
     });
     setFilteredData(searchData);
@@ -68,6 +75,17 @@ export default function Home() {
     }
   };
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   return (
     <Container>
       <Container px="xl" size="30rem" h="50" mt={"md"}>
@@ -88,6 +106,17 @@ export default function Home() {
           <SearchBar onSearch={handleSearch} />
           <FilterButton onTypeSelect={handleTypeFilter} />
         </Flex>
+        <Group>
+          <Button onClick={handlePrevPage} disabled={currentPage === 1}>
+            Previous Page
+          </Button>
+          <Button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next Page
+          </Button>
+        </Group>
       </Box>
       {isLoading ? (
         <Center p={400}>
